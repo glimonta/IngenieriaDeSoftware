@@ -1,8 +1,6 @@
-DROP TABLE TARJETA      cascade;
+drop table tarjeta      CASCADE;
 
-DROP TABLE CLIENTE      cascade;
-
-drop table tlfs_cliente cascade;
+drop table cliente      CASCADE;
 
 drop table plan         cascade;
 
