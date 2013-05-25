@@ -82,16 +82,16 @@ INSERT INTO Brinda VALUES (00008,00002);
 INSERT INTO Brinda VALUES (00009,00002);
 INSERT INTO Brinda VALUES (00010,00002);
 
+--Planes
+INSERT INTO Plan VALUES (00001,'Plan Mocel 2000' );
+INSERT INTO Plan VALUES (00002,'Plan Mixto Plus' );
+INSERT INTO Plan VALUES (00003,'Plan Mixto Vacio');
+
 --Prepagos
 INSERT INTO Prepago VALUES (00001,49   );
 
 --Postpagos
 INSERT INTO Postpago VALUES (00002,211   );
-
---Planes
-INSERT INTO Plan VALUES (00001,'Plan Mocel 2000' );
-INSERT INTO Plan VALUES (00002,'Plan Mixto Plus' );
-INSERT INTO Plan VALUES (00003,'Plan Mixto Vacio');
 
 --Posees
 INSERT INTO Posee VALUES (00001,00001);
