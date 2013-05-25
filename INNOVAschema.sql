@@ -10,7 +10,6 @@ create table tarjeta (
   fecha_venc date not null, -- Fecha de vencimiento de la tarjeta.
   cod_seguridad varchar(3) not null, -- Codigo de seguridad de la tarjeta.
   banco varchar(30) not null -- Es el banco emisor de la tarjeta.
-  observacion varchar(160) not null -- Son las observaciones de la factura
 );
 
 create table cliente (
