@@ -10,6 +10,7 @@ create table tarjeta (
   fecha_venc date not null, -- Fecha de vencimiento de la tarjeta.
   cod_seguridad varchar(3) not null, -- Codigo de seguridad de la tarjeta.
   banco varchar(30) not null -- Es el banco emisor de la tarjeta.
+  observacion varchar(160) not null -- Son las observaciones de la factura
 );
 
 create table cliente (
@@ -22,6 +23,7 @@ create table cliente (
   efectivo integer not null, -- Cantidad de efectivo con la que se paga la factura (si el efectivo es cero
   --es porque se uso alguna tarjeta).
   total integer not null, -- Total de la factura.
+  observacion varchar(160) -- Descripcion de la factura
   primary key(tipo, nro, fecha) -- La clave primaria es tipo y nro.
 );
 
@@ -50,6 +52,7 @@ create table servicio (
   codigo_serv numeric(5) not null primary key, -- Codigo del servicio.
   nombre varchar(15) not null, -- Nombre del servicio
   tarifa integer -- Tarifa del servicio.
+  cupo numeric(10) --Cupos disponibles del servicio
 );
 
 create table empresa (
@@ -110,8 +113,8 @@ create table ofrece (
 
 create table agrega (
   codigo_serv numeric(5) not null references servicio(codigo_serv), -- Codigo del servicio.
-  codigo_plan numeric(5) not null references plan(codigo_plan),
-  primary key (codigo_serv, codigo_plan)
+  nro_serie numeric(10) not null references producto(nro_serie),
+  primary key (codigo_serv, nro_serie)
 );
 
 create table brinda (
@@ -124,3 +127,4 @@ create table brinda (
 
 alter table prepago add check ( monto >= 0 ); -- Se chequea que el monto del prepago sea >=0.
 alter table servicio add check ( tarifa >= 0 ); -- Se chequea que el monto de la tarifa sea >=0.
+alter table servicio add check ( cupo >= 0 ); -- Se chequea que los cupos no sean negativos.
