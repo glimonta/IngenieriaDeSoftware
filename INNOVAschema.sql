@@ -28,7 +28,7 @@ create table cliente (
 
 create table plan (
   codigo_plan numeric(5) not null primary key, -- Codigo del plan.
-  nombre_plan varchar(15) not null -- Nombre del plan.
+  nombre_plan varchar(45) not null -- Nombre del plan.
 );
 
 create table prepago (
