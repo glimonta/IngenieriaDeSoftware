@@ -49,7 +49,7 @@ create table paquete (
 
 create table servicio (
   codigo_serv numeric(5) not null primary key, -- Codigo del servicio.
-  nombre varchar(15) not null, -- Nombre del servicio
+  nombre varchar(45) not null, -- Nombre del servicio
   tarifa integer, -- Tarifa del servicio.
   cupo numeric(10) --Cupos disponibles del servicio
 );
