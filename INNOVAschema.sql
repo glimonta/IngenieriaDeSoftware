@@ -79,7 +79,7 @@ create table consume (
   tipo ID not null, -- Tipo de ID
   nro numeric(10) not null, -- numero de id
   fecha date not null, -- fecha de generacion de la factura
-  fecha_consumo date not null,--fecha donde se realizo el consumo
+  fecha_consumo timestamp not null,--fecha donde se realizo el consumo
   primary key(codigo_serv, nro_serie,fecha, tipo, nro) -- La clave primaria es la combinacion del numero de serie con el codigo del servicio.
 );
 
