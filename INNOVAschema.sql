@@ -76,7 +76,11 @@ create table consume (
   codigo_serv numeric(5) not null references servicio(codigo_serv), -- Codigo del servicio.
   nro_serie numeric(10) not null references producto(nro_serie), -- Numero de serie del producto
   cantidad integer not null, -- Cantidad que se consume
-  primary key(codigo_serv, nro_serie) -- La clave primaria es la combinacion del numero de serie con el codigo del servicio.
+  tipo ID not null, -- Tipo de ID
+  nro numeric(10) not null, -- numero de id
+  fecha date not null, -- fecha de generacion de la factura
+  fecha_consumo date not null,--fecha donde se realizo el consumo
+  primary key(codigo_serv, nro_serie,fecha, tipo, nro) -- La clave primaria es la combinacion del numero de serie con el codigo del servicio.
 );
 
 create table tiene (
