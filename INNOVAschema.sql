@@ -22,7 +22,7 @@ create table cliente (
   efectivo integer not null, -- Cantidad de efectivo con la que se paga la factura (si el efectivo es cero
   --es porque se uso alguna tarjeta).
   total integer not null, -- Total de la factura.
-  observacion varchar(160) -- Descripcion de la factura
+  observacion varchar(160), -- Descripcion de la factura
   primary key(tipo, nro, fecha) -- La clave primaria es tipo y nro.
 );
 
@@ -50,7 +50,7 @@ create table paquete (
 create table servicio (
   codigo_serv numeric(5) not null primary key, -- Codigo del servicio.
   nombre varchar(15) not null, -- Nombre del servicio
-  tarifa integer -- Tarifa del servicio.
+  tarifa integer, -- Tarifa del servicio.
   cupo numeric(10) --Cupos disponibles del servicio
 );
 
