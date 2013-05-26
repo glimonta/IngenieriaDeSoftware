@@ -1,9 +1,6 @@
 begin;
-drop type if exists tipoTarjeta   cascade;
-drop type if exists ID            cascade;
 
 create type tipoTarjeta as enum ('C','D');
-create type ID as enum ('C','R');
 
 create table tarjeta (
   numero        text        not null primary key, -- Numero de tarjeta de credito, no contiene guiones.
@@ -14,21 +11,25 @@ create table tarjeta (
 );
 
 create table cliente (
-  tipo          ID      not null, -- Tipo de documento de ID 'R' para RIF y 'C' para cedula.
-  nro           integer not null, -- Numero de ID.
+  nro_cliente   serial  not null primary key, -- Numero de cliente
+  cedula        integer not null unique, -- Cedula del cliente
   nombre        text    not null, -- Nombre del cliente.
   direccion     text    not null, -- Direccion del cliente.
-  telefono      text    not null, -- Numero de telefono del cliente.
-  fecha         date    not null, -- Fecha de la factura.
-  efectivo      integer not null, -- Cantidad de efectivo con la que se paga la factura (si el efectivo es cero
-  --es porque se uso alguna tarjeta).
-  total         integer not null, -- Total de la factura.
-  observacion   text, -- Descripcion de la factura
-  primary key(tipo, nro, fecha) -- La clave primaria es tipo y nro.
+  telefono      text    not null -- Numero de telefono del cliente.
+);
+
+create table factura (
+  nro_factura serial  not null primary key, -- Numero de factura
+  nro_cliente integer not null references cliente, -- Cliente asociado a la factura
+  fecha       date    not null, -- Fecha de la factura
+  total       integer not null, -- Total de la factura
+  observacion text    not null, -- Observaciones de la factura
+  efectivo    integer not null check (efectivo >= 0), -- Cantidad de efectivo con la que se paga la factura (si el efectivo es cero es porue se uso alguna tarjeta)
+  cancelada   boolean not null -- Indica si la factura está cancelada o no
 );
 
 create table plan (
-  codigo_plan integer not null primary key, -- Codigo del plan.
+  codigo_plan serial  not null primary key, -- Codigo del plan.
   nombre_plan text    not null -- Nombre del plan.
 );
 
@@ -44,8 +45,8 @@ create table postpago (
 );
 
 create table paquete (
-  codigo_paq integer not null primary key, -- Codigo del paquete.
-  nombre     text    not null -- Nombre del paquete.
+  codigo_paq serial not null primary key, -- Codigo del paquete.
+  nombre     text   not null -- Nombre del paquete.
 );
 
 create table servicio (
@@ -56,7 +57,7 @@ create table servicio (
 );
 
 create table empresa (
-  codigo_empresa integer not null primary key, -- Codigo de la empresa.
+  codigo_empresa serial not null primary key, -- Codigo de la empresa.
   nombre         text    not null -- Nombre de la empresa.
 );
 
@@ -66,41 +67,31 @@ create table producto (
 );
 
 create table genera (
-  nro_serie serial  not null references producto(nro_serie), -- numero de serie del producto.
-  fecha     date    not null, -- fecha de generacion de la factura
-  tipo      ID      not null, -- ID del cliente
-  nro       integer not null, -- Numero de id
-  foreign key (fecha, tipo, nro) references cliente(fecha, tipo, nro)
+  nro_serie   serial  not null references producto(nro_serie), -- numero de serie del producto.
+  fecha       date    not null, -- fecha de generacion de la factura
+  nro_cliente integer not null references cliente -- Numero de cliente
 );
 
 create table consume (
-  codigo_serv   integer not null references servicio(codigo_serv), -- Codigo del servicio.
-  nro_serie     integer not null references producto(nro_serie), -- Numero de serie del producto
-  cantidad      integer not null, -- Cantidad que se consume
-  tipo          ID      not null, -- Tipo de ID
-  nro           integer not null, -- numero de id
-  fecha         date    not null, -- fecha de generacion de la factura
+  codigo_serv   integer   not null references servicio(codigo_serv), -- Codigo del servicio.
+  nro_serie     integer   not null references producto(nro_serie), -- Numero de serie del producto
+  cantidad      integer   not null, -- Cantidad que se consume
+  nro_cliente   integer   not null references cliente, -- Numero de cliente
   fecha_consumo timestamp not null,--fecha donde se realizo el consumo
-  primary key(codigo_serv, nro_serie,fecha, tipo, nro) -- La clave primaria es la combinacion del numero de serie con el codigo del servicio.
+  primary key(codigo_serv, nro_serie, nro_cliente) -- La clave primaria es la combinacion del numero de serie con el codigo del servicio y el numero del cliente
 );
 
 create table tiene (
-  tipo    ID       not null, -- Tipo de ID
-  nro     integer  not null, -- Numero de ID
-  fecha   date     not null, -- fecha de generacion de la factura
-  numero  text     not null references tarjeta(numero), -- Numero de la tarjeta
-  foreign key (tipo, nro, fecha) references cliente(tipo, nro, fecha), -- tipo, nro y fecha referencian al cliente
-  primary key (tipo, nro, fecha, numero) -- La clave es la combinacion de tipo, nro, fecha y numero
+  nro_cliente   integer   not null references cliente, -- Numero de cliente
+  numero        text      not null references tarjeta(numero), -- Numero de la tarjeta
+  primary key (nro_cliente, numero) -- La clave es la combinacion del numero de tarjeta y el numero de cliente
 );
 
 create table contrata (
-  tipo        ID      not null, -- Tipo de ID
-  nro         integer not null, -- numero de id
-  fecha       date    not null, -- fecha de generacion de la factura
+  nro_cliente integer not null references cliente, -- Numero de cliente
   nro_serie   integer not null references producto(nro_serie), -- numero de serie del producto
   codigo_plan integer not null references plan(codigo_plan), -- codigo del plan
-  foreign key (tipo, nro, fecha) references cliente(tipo, nro, fecha),
-  primary key (tipo, nro, nro_serie, fecha, codigo_plan)
+  primary key (nro_serie, nro_cliente, codigo_plan)
 );
 
 create table posee (
