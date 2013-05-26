@@ -123,8 +123,8 @@ WHERE
 
 --Planes
 INSERT INTO Plan(nombre_plan) VALUES
-('Plan Mocel 2000' ),
-('Plan Mixto Plus' );
+('Plan Mocel 2000'),
+('Plan Mixto Plus');
 
 --Prepagos
 INSERT INTO Prepago(codigo_plan, monto)
@@ -175,7 +175,7 @@ FROM
   (VALUES
     (20309753,'Iphone 9GS','Plan Mocel 2000'),
     (21030282,'Iphone 9GS','Plan Mixto Plus'),
-    (20131092,'Nokia N999','Plan Mocel 2000'),
+    (20131092,'Nokia N999','Plan Mixto Plus'),
     (19379657,'Blackberry','Plan Mixto Plus'),
     (19994366,'Iphone 9GS','Plan Mocel 2000'),
     (22382687,'Samsung S7','Plan Mocel 2000'),
@@ -214,4 +214,18 @@ WHERE
   Producto.tipo   = Datos.nombre_producto AND
   Servicio.nombre = Datos.nombre_serv
 ;
+
+--Facturas
+INSERT INTO Factura(nro_cliente, fecha, total, observacion, efectivo, cancelada)
+SELECT Cliente.nro_cliente, Datos.fecha, Datos.total, Datos.observacion, Datos.efectivo, Datos.cancelada
+FROM
+  Cliente,
+  (VALUES
+    (20131092,to_date('12 Dec 2012','DD Mon YYYY'),1212,'es bajito'   , 200,TRUE  ),
+    (20131092,to_date('12 Jan 2013','DD Mon YYYY'),923,'es mas grande',   0,FALSE )
+  ) AS Datos (cedula, fecha, total, observacion, efectivo, cancelada)
+WHERE
+  Cliente.cedula = Datos.cedula
+;
+
 commit;

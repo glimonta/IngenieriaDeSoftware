@@ -1,39 +1,53 @@
+Begin;
 --Empresa
-INSERT INTO Empresa VALUES (00001,'CABLETV');
+INSERT INTO Empresa(nombre)
+VALUES
+  ('CABLETV');
 
 --Clientes
-INSERT INTO Cliente VALUES
-('C',09928313,'Manuel Gomez'    , 'Macaracuay'  ,11111111118, CURRENT_DATE,0,0,'elefante' ),
-('C',11233445,'Jose Luis'       , 'Yo no se'    ,24124123164, CURRENT_DATE,0,0,'oso'      ),
-('C',19379657,'Andrea Salcedo'  , 'California'  ,04263476562, CURRENT_DATE,0,0,'la cucha' ),
-('C',19994366,'Catherine Elena' , 'Oripoto'     ,04129356911, CURRENT_DATE,0,0,'la sis'   ),
-('C',20131092,'Marcos Antonio'   , 'Los Samanes' ,04241218886, CURRENT_DATE,0,0,'el lil'  ),
-('C',20309753,'John Mikel'      , 'Bosque Valle',04142342006, CURRENT_DATE,0,0,'ninguna'  ),
-('C',21030282,'Gabriela Claret' , 'Macaracuay'  ,04244666383, CURRENT_DATE,0,0,'ninguna'  ),
-('C',22382687,'Reinaldo Enrique', 'Yo no se'    ,04142784945, CURRENT_DATE,0,0,'ninguna'  ),
-('R',00122334,'Fernando Javier' , 'Montalban'   ,04123622646, CURRENT_DATE,0,0,'fercho'   ),
-('R',00912314,'Aguacate Guasy'  , 'Magickland'  ,11111111111, CURRENT_DATE,0,0,':)'       ),
-('R',01235689,'Joel Orlando'    , 'Yo no se'    ,04123093919, CURRENT_DATE,0,0,'ninguna'  ),
-('R',05232141,'Eduardo Blanco'  , 'Yo no se'    ,00000000000, CURRENT_DATE,0,0,'ninguna'  ),
-('R',12332141,'Ramon Marquez'   , 'Yo no se'    ,24124123123, CURRENT_DATE,0,0,'moncho'   ),
-('R',12496710,'Oveja Negra'     , 'Hoyo negro'  ,66666666666, CURRENT_DATE,0,0,'malo D:'  ),
-('R',35891247,'Angela di Serio' , 'Yo no se'    ,00000000000, CURRENT_DATE,0,0,'ninguna'  );
+INSERT INTO Cliente(cedula, nombre, direccion, telefono) VALUES
+(09928313,'Manuel Gomez'    , 'Macaracuay'  ,11111111118),
+(11233445,'Jose Luis'       , 'Yo no se'    ,24124123164),
+(19379657,'Andrea Salcedo'  , 'California'  ,04263476562),
+(19994366,'Catherine Elena' , 'Oripoto'     ,04129356911),
+(20131092,'Marcos Antonio'  , 'Los Samanes' ,04241218886),
+(20309753,'John Mikel'      , 'Bosque Valle',04142342006),
+(21030282,'Gabriela Claret' , 'Macaracuay'  ,04244666383),
+(22382687,'Reinaldo Enrique', 'Yo no se'    ,04142784945),
+(00122334,'Fernando Javier' , 'Montalban'   ,04123622646),
+(00912314,'Aguacate Guasy'  , 'Magickland'  ,11111111111),
+(01235689,'Joel Orlando'    , 'Yo no se'    ,04123093919),
+(05232141,'Eduardo Blanco'  , 'Yo no se'    ,00000000000),
+(12332141,'Ramon Marquez'   , 'Yo no se'    ,24124123123),
+(12496710,'Oveja Negra'     , 'Hoyo negro'  ,66666666666),
+(35891247,'Angela di Serio' , 'Yo no se'    ,00000000000);
 
 --Productos
-INSERT INTO Producto VALUES
-(0000000001,'Deco01'),
-(0000000002,'Deco02'),
-(0000000003,'Deco03'),
-(0000000004,'Deco04'),
-(0000000005,'Deco05');
+INSERT INTO Producto(tipo)
+VALUES
+  ('Deco01'),
+  ('Deco02'),
+  ('Deco03'),
+  ('Deco04'),
+  ('Deco05');
 
 --Ofrece
-INSERT INTO Ofrece VALUES
-(00001,0000000001),
-(00001,0000000002),
-(00001,0000000003),
-(00001,0000000004),
-(00001,0000000005);
+INSERT INTO Ofrece(codigo_empresa, nro_serie)
+SELECT Empresa.codigo_empresa, Producto.nro_serie
+FROM
+  Empresa,
+  Producto,
+  (VALUES
+    ('TVCABLE','Deco01'),
+    ('TVCABLE','Deco02'),
+    ('TVCABLE','Deco03'),
+    ('TVCABLE','Deco04'),
+    ('TVCABLE','Deco05')
+  ) AS Datos (empresa, producto)
+WHERE
+  Empresa.nombre  = Datos.empresa AND
+  Producto.tipo = Datos.producto
+;
 
 --Tarjeta
 INSERT INTO Tarjeta VALUES
@@ -45,11 +59,19 @@ INSERT INTO Tarjeta VALUES
 (0000000000000005,'C','12-12-2020',005,'USB');
 
 --Tiene
-INSERT INTO Tiene VALUES
-('C',20309753,CURRENT_DATE,0000000000000000),
-('C',21030282,CURRENT_DATE,0000000000000001),
-('C',20131092,CURRENT_DATE,0000000000000002),
-('C',19379657,CURRENT_DATE,0000000000000003);
+INSERT INTO Tiene (nro_cliente, numero)
+SELECT Cliente.nro_cliente, Datos.tarjeta
+FROM
+  Cliente,
+  (VALUES
+    (20309753, 0000000000000000),
+    (21030282, 0000000000000001),
+    (20131092, 0000000000000002),
+    (19379657, 0000000000000003)
+  ) AS Datos (cedula, tarjeta)
+WHERE
+  Cliente.cedula = Datos.cedula
+;
 
 --Servicios
 INSERT INTO Servicio (nombre) VALUES
@@ -163,17 +185,19 @@ INSERT INTO Servicio (nombre) VALUES
  ('Radio20'       );
 
 --Servicio de enunciado
-INSERT INTO Servicio  VALUES
-('TVBRAZIL'       ,42),
-('SPN'            ,30),
-('NoticiasMundial',35);
-('PeliculasPPV'   ,35);
+INSERT INTO Servicio(nombre, tarifa)
+VALUES
+  ('TVBRAZIL'       ,42),
+  ('SPN'            ,30),
+  ('NoticiasMundial',35),
+  ('PeliculasPPV'   ,35);
 
 --Paquetes
-INSERT INTO Paquete VALUES
-(00001, 'Paquete 01'),
-(00002, 'Paquete 02'),
-(00003, 'Paquete 03');
+INSERT INTO Paquete(nombre)
+VALUES
+  ('Paquete 01'),
+  ('Paquete 02'),
+  ('Paquete 03');
 
 --Brindas
 INSERT INTO Brinda
@@ -240,7 +264,6 @@ FROM
     ('Mundos06'  ,'Paquete01'),
     ('Mundos07'  ,'Paquete01'),
     ('Mundos09'  ,'Paquete01'),
-
     ('Nacional01','Paquete02'),
     ('Nacional02','Paquete02'),
     ('Nacional03','Paquete02'),
@@ -375,46 +398,114 @@ WHERE
 ;
 
 --Planes
-INSERT INTO Plan VALUES
-(00001,'TVCABLE Bronce' ),
-(00002,'TVCABLE Plata'  ),
-(00003,'TVCABLE Oro'    );
+INSERT INTO Plan(nombre_plan)
+VALUES
+  ('TVCABLE Bronce' ),
+  ('TVCABLE Plata'  ),
+  ('TVCABLE Oro'    );
 
 --Prepagos
-INSERT INTO Prepago  VALUES (00001,140   );
-INSERT INTO Postpago VALUES (00002,220   );
+INSERT INTO Prepago(codigo_plan, monto)
+SELECT Plan.codigo_plan, Datos.monto
+FROM
+  Plan,
+  (VALUES
+    ('TVCABLE Bronce', 140),
+    ('TVCABLE Plata' , 220)
+  ) AS Datos (nombre_plan, monto)
+WHERE
+  Plan.nombre_plan = Datos.nombre_plan
+;
 
 --Postpagos
-INSERT INTO Prepago  VALUES (00001,140   );
-INSERT INTO Postpago VALUES (00002,220   );
+INSERT INTO Postpago(codigo_plan, renta_basica)
+SELECT Plan.codigo_plan, Datos.renta_basica
+FROM
+  Plan,
+  (VALUES
+    ('TVCABLE Bronce', 140),
+    ('TVCABLE Plata' , 220)
+  ) AS Datos (nombre_plan, renta_basica)
+WHERE
+  Plan.nombre_plan = Datos.nombre_plan
+;
 
 --Posees
-INSERT INTO Posee VALUES
-(00001,00001),
-(00002,00002);
+INSERT INTO Posee(codigo_paq, codigo_pla)
+SELECT Paquete.codigo_paq, Plan.codigo_plan
+FROM
+  Paquete,
+  Plan,
+  (VALUES
+    ('Paquete 01', 'TVCABLE Bronce'),
+    ('Paquete 02', 'TVCABLE Plata' )
+  ) AS Datos (nombre_paq, nombre_plan)
+WHERE
+  Paquete.nombre = Datos.nombre_paq AND
+  Plan.nombre_plan = Datos.nombre_plan
+;
 
 --Contratas
-INSERT INTO Contrata VALUES
-('C',20309753,CURRENT_DATE,0000000001,00001),
-('C',21030282,CURRENT_DATE,0000000001,00002),
-('C',20131092,CURRENT_DATE,0000000003,00001),
-('C',19379657,CURRENT_DATE,0000000002,00002),
-('C',19994366,CURRENT_DATE,0000000001,00001),
-('C',22382687,CURRENT_DATE,0000000004,00001),
-('R',01235689,CURRENT_DATE,0000000001,00002),
-('R',00122334,CURRENT_DATE,0000000001,00001),
-('C',11233445,CURRENT_DATE,0000000003,00001),
-('R',12332141,CURRENT_DATE,0000000001,00002),
-('C',09928313,CURRENT_DATE,0000000002,00001),
-('R',00912314,CURRENT_DATE,0000000001,00002),
-('R',05232141,CURRENT_DATE,0000000001,00001),
-('R',35891247,CURRENT_DATE,0000000002,00002),
-('R',12496710,CURRENT_DATE,0000000003,00001),
-('C',20131092,CURRENT_DATE,0000000002,00002);
+INSERT INTO Contrata(nro_cliente, nro_serie, codigo_plan)
+SELECT Cliente.nro_cliente, Producto.nro_serie, Plan.codigo_plan
+FROM
+  Cliente,
+  Producto,
+  Plan,
+  (VALUES
+    (20309753,'Deco01','TVCABLE Bronce'),
+    (21030282,'Deco01','TVCABLE Plata' ),
+    (20131092,'Deco03','TVCABLE Bronce'),
+    (19379657,'Deco02','TVCABLE Plata' ),
+    (19994366,'Deco01','TVCABLE Bronce'),
+    (22382687,'Deco04','TVCABLE Bronce'),
+    (01235689,'Deco01','TVCABLE Plata' ),
+    (00122334,'Deco01','TVCABLE Bronce'),
+    (11233445,'Deco03','TVCABLE Bronce'),
+    (12332141,'Deco01','TVCABLE Plata' ),
+    (09928313,'Deco02','TVCABLE Bronce'),
+    (00912314,'Deco01','TVCABLE Plata' ),
+    (05232141,'Deco01','TVCABLE Bronce'),
+    (35891247,'Deco02','TVCABLE Plata' ),
+    (12496710,'Deco03','TVCABLE Bronce'),
+    (20131092,'Deco02','TVCABLE Plata' )
+  ) AS Datos (cedula, nombre_producto, nombre_plan)
+WHERE
+  Cliente.cedula   = Datos.cedula AND
+  Producto.tipo    = Datos.nombre_producto AND
+  Plan.nombre_plan = Datos.nombre_plan
+;
 
 --Cosume
-INSERT INTO Consume VALUES
-(00001,0000000003,50,'C',20131092,CURRENT_DATE,CURRENT_TIMESTAMP),
-(00002,0000000003,54,'C',20131092,CURRENT_DATE,CURRENT_TIMESTAMP),
-(00003,0000000003,44,'C',20131092,CURRENT_DATE,CURRENT_TIMESTAMP),
-(00004,0000000003,52,'C',20131092,CURRENT_DATE,CURRENT_TIMESTAMP);
+INSERT INTO Consume(codigo_serv, nro_serie, cantidad, nro_cliente, fecha_consumo)
+SELECT Servicio.codigo_serv, Producto.nro_serie, Datos.cantidad, Cliente.nro_cliente, Datos.fecha
+FROM
+  Servicio,
+  Producto,
+  Cliente,
+  (VALUES
+    ('TVBRAZIL'       ,'Deco03',50,20131092,CURRENT_TIMESTAMP),
+    ('SPN'            ,'Deco03',54,20131092,CURRENT_TIMESTAMP),
+    ('NoticiasMundial','Deco03',44,20131092,CURRENT_TIMESTAMP),
+    ('PeliculasPPV'   ,'Deco03',52,20131092,CURRENT_TIMESTAMP)
+  ) AS Datos (nombre_serv, nombre_producto, cantidad, cedula, fecha)
+WHERE
+  Cliente.cedula  = Datos.cedula AND
+  Producto.tipo   = Datos.nombre_producto AND
+  Servicio.nombre = Datos.nombre_serv
+;
+
+--Facturas
+INSERT INTO Factura(nro_cliente, fecha, total, observacion, efectivo, cancelada)
+SELECT Cliente.nro_cliente, Datos.fecha, Datos.total, Datos.observacion, Datos.efectivo, Datos.cancelada
+FROM
+  Cliente,
+  (VALUES
+    (20131092,to_date('12 Dec 2012','DD Mon YYYY'),1212,'es bajito'   , 200,TRUE  ),
+    (20131092,to_date('12 Jan 2013','DD Mon YYYY'),923,'es mas grande',   0,FALSE )
+  ) AS Datos (cedula, fecha, total, observacion, efectivo, cancelada)
+WHERE
+  Cliente.cedula = Datos.cedula
+;
+
+commit;
