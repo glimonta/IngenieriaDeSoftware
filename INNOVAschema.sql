@@ -1,3 +1,4 @@
+begin;
 drop type if exists tipoTarjeta   cascade;
 drop type if exists ID            cascade;
 
@@ -8,8 +9,8 @@ create table tarjeta (
   numero        text        not null primary key, -- Numero de tarjeta de credito, no contiene guiones.
   tipo          tipoTarjeta not null, -- Tipo de tarjeta 'C' para credito y 'D' para debito.
   fecha_venc    date        not null, -- Fecha de vencimiento de la tarjeta.
-  cod_seguridad varchar(3)  not null, -- Codigo de seguridad de la tarjeta.
-  banco         text        not null -- Es el banco emisor de la tarjeta.
+  cod_seguridad char(3)     not null, -- Codigo de seguridad de la tarjeta.
+  banco         text        not null  -- Es el banco emisor de la tarjeta.
 );
 
 create table cliente (
@@ -17,7 +18,7 @@ create table cliente (
   nro           integer not null, -- Numero de ID.
   nombre        text    not null, -- Nombre del cliente.
   direccion     text    not null, -- Direccion del cliente.
-  telefono      integer not null, -- Numero de telefono del cliente.
+  telefono      text    not null, -- Numero de telefono del cliente.
   fecha         date    not null, -- Fecha de la factura.
   efectivo      integer not null, -- Cantidad de efectivo con la que se paga la factura (si el efectivo es cero
   --es porque se uso alguna tarjeta).
@@ -33,7 +34,7 @@ create table plan (
 
 create table prepago (
   codigo_plan integer not null references plan(codigo_plan), -- Codigo del plan prepago.
-  monto       integer not null -- Monto del prepago.
+  monto       integer not null check (monto >= 0)            -- Monto del prepago.
 );
 
 create table postpago (
@@ -48,10 +49,10 @@ create table paquete (
 );
 
 create table servicio (
-  codigo_serv serial not null primary key, -- Codigo del servicio.
-  nombre      text   not null, -- Nombre del servicio
-  tarifa      integer, -- Tarifa del servicio.
-  cupo        integer --Cupos disponibles del servicio
+  codigo_serv serial  not null primary key, -- Codigo del servicio.
+  nombre      text    not null, -- Nombre del servicio
+  tarifa      integer check (tarifa >= 0), -- Tarifa del servicio.
+  cupo        integer check (cupo >= 0  )--Cupos disponibles del servicio
 );
 
 create table empresa (
@@ -125,9 +126,4 @@ create table brinda (
   codigo_paq  integer not null references paquete(codigo_paq),
   primary key(codigo_serv, codigo_paq)
 );
-
--- Constraints
-
-alter table prepago add check ( monto >= 0 ); -- Se chequea que el monto del prepago sea >=0.
-alter table servicio add check ( tarifa >= 0 ); -- Se chequea que el monto de la tarifa sea >=0.
-alter table servicio add check ( cupo >= 0 ); -- Se chequea que los cupos no sean negativos.
+commit;
