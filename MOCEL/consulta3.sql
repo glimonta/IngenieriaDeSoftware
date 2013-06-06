@@ -14,7 +14,7 @@ where factura.cancelada = FALSE
 
 group by empresa.nombre
 
---having consume.fecha_consumo > max(factura.fecha)
+having consume.fecha_consumo > max(factura.fecha)
 
 ;
 
