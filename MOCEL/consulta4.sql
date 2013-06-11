@@ -19,3 +19,19 @@ group by empresa.nombre
 ;
 
 
+------------------------------------
+-- Consulta que por ahora lo logra:
+------------------------------------
+-- no logra aun hacer la parte de la renta basica
+-- los gastos de tarifa extra están bien. Creo.
+
+select sum(p.monto) - sum(c.cantidad * s.tarifa)
+from consume c natural join servicio s, prepago p
+where c.fecha_consumo > ( select max(fecha)
+                          from factura )
+      and
+      c.nro_cliente in ( select nro_cliente
+                         from contrata
+                         where codigo_plan = p.codigo_plan
+                               and
+                               nro_serie = c.nro_serie)

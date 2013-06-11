@@ -18,3 +18,19 @@ having consume.fecha_consumo > max(factura.fecha)
 
 ;
 
+------------------------------------
+-- Consulta que por ahora lo logra:
+------------------------------------
+-- no logra aun hacer la parte de la renta basica
+-- los gastos de tarifa extra están bien. Creo.
+
+select sum(c.cantidad * s.tarifa) + sum(p.renta_basica)
+from consume c natural join servicio s, postpago p
+where c.fecha_consumo > ( select max(fecha)
+                          from factura )
+      and
+      c.nro_cliente in ( select nro_cliente
+                         from contrata
+                         where codigo_plan = p.codigo_plan
+                               and
+                               nro_serie = c.nro_serie)
